@@ -1,6 +1,6 @@
 # root_traits_auto
 
-This program will eventually compute traits that can be automatically derived from the skeleton. Currently, it only outputs the average root length, computed as the total length of the skeleton divided by the number of endpoints. 
+This program will eventually compute traits that can be automatically derived from the skeleton. Currently, it only print out in the command prompt (console window) the average root length, computed as the total length of the skeleton divided by the number of endpoints. 
 
 An example command:
 

@@ -1,0 +1,28 @@
+﻿  root_traits_auto.cpp
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(57,7): warning C4101: 'i': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(88,10): warning C4101: 'j': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(88,7): warning C4101: 'i': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(416,14): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(482,7): warning C4101: 'i': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(660,15): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(661,16): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(666,15): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(667,16): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(689,7): warning C4101: 'i': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(980,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1422,8): warning C4101: 'i': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1424,17): warning C4101: 'prop': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1590,16): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1591,17): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1595,16): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1596,17): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1642,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1764,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1662,11): warning C4101: 'item_ptr': unreferenced local variable
+C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1656,8): warning C4101: 'i': unreferenced local variable
+  Generating code
+  1 of 506 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  root_traits_auto.vcxproj -> C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto.exe
