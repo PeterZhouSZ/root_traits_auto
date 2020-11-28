@@ -133,14 +133,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\danzeng\source\repos\root_traits_auto\third_party\alglib;C:\Users\danzeng\source\repos\root_traits_auto\third_party\boost;C:\Users\danzeng\source\repos\root_traits_auto\third_party\boost\include;C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\third_party\alglib;..\third_party\boost;..\third_party\boost\include;..\third_party\ply\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\danzeng\source\repos\root_traits_auto\third_party\alglib;C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\third_party\alglib;..\ply\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
