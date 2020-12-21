@@ -677,6 +677,9 @@ int main(int argc, char** argv)
 	std::vector<int> vertComps;
 	std::vector<int> edgeComps;
 	//Find vertices with radius greater than upperRadiiThresh, and perform BFS to find high radius connected component starting from that vertex
+	//For recording which vertices are in the stem (The stem is the graph diameter of the high radius region
+	map<int, bool> vertexInDiameter;
+	vector<int> diameterVts;
 	for (int i = 0; i < vts.size(); i++) {
 
 		//If haven't visited this vertex yet and above upperRadiiThresh, begin new component
@@ -685,9 +688,9 @@ int main(int argc, char** argv)
 
 				std::vector<int> newVertComp;
 				std::vector<int> newEdgeComp;
-
+				map<int, int> visitedMap = connectedVertexComponents;
 				//Flood fill one component by traversing edges along skeleton
-				fillComponentIterative(connectedVertexComponents, i, vertIndexEdgeIndices, edges, vertComps, newEdgeComp, newVertComp, lowerRadiiThresh, vts);
+				fillComponentIterative(visitedMap, i, vertIndexEdgeIndices, edges, vertComps, newEdgeComp, newVertComp, lowerRadiiThresh, vts);
 
 				//Optional step: threshold the largest components by the number of vertices
 				float length = getLengthOfComponent(newEdgeComp, edges, vts);
@@ -701,270 +704,272 @@ int main(int argc, char** argv)
 					vertPos.push_back(vts[newVertComp[j]]);
 				}
 				std::cout << "vert pos size " << vertPos.size() << std::endl;
-				potentialStemComponents.push_back(make_tuple(vertPos, newEdgeComp, length));
+				//potentialStemComponents.push_back(make_tuple(vertPos, newEdgeComp, length));
 				//break;
 				//}
+
+				vector<int> stemEdgesT = newEdgeComp;
+				std::vector<VertexWithMsure> stemVerticesT;
+				std::vector<internal::Edge> stemEdgesRT;
+				std::vector<internal::Face> stemFacesT;
+
+
+				std::map<int, int> oldToNewVtIndex;
+
+
+				std::vector<E> stemEdgesReindexed;
+
+				//vector<float> weights;
+				float* weights = new float[stemEdgesT.size()];
+
+				E* edgePairs = new E[stemEdgesT.size()];
+				map<E, float> edgeWeightMap;
+				map<int, int> stemToOrigVertexMapping;
+				for (int i = 0; i < stemEdgesT.size(); i++) {
+					if (oldToNewVtIndex.find(edges[stemEdgesT[i]].v1) == oldToNewVtIndex.end()) {
+						oldToNewVtIndex[edges[stemEdgesT[i]].v1] = stemVerticesT.size();
+						stemToOrigVertexMapping[stemVerticesT.size()] = edges[stemEdgesT[i]].v1;
+						stemVerticesT.push_back(vts[edges[stemEdgesT[i]].v1]);
+						stemVerticesT[stemVerticesT.size() - 1].width = 1;
+					}
+					if (oldToNewVtIndex.find(edges[stemEdgesT[i]].v2) == oldToNewVtIndex.end()) {
+						oldToNewVtIndex[edges[stemEdgesT[i]].v2] = stemVerticesT.size();
+						stemToOrigVertexMapping[stemVerticesT.size()] = edges[stemEdgesT[i]].v2;
+						stemVerticesT.push_back(vts[edges[stemEdgesT[i]].v2]);
+						stemVerticesT[stemVerticesT.size() - 1].width = 1;
+					}
+					internal::Edge newE = edges[stemEdgesT[i]];
+					newE.v1 = oldToNewVtIndex[edges[stemEdgesT[i]].v1];
+					newE.v2 = oldToNewVtIndex[edges[stemEdgesT[i]].v2];
+					edgePairs[i] = E(newE.v1, newE.v2);
+					stemEdgesRT.push_back(newE);
+
+					if (stemVerticesT[newE.v1].inDiameter == 1 || stemVerticesT[newE.v2].inDiameter == 1) {
+						weights[i] = 0.0;
+					}
+					else {
+						float avgRadius = (stemVerticesT[newE.v1].radius + stemVerticesT[newE.v2].radius) / 2.0;
+						if (avgRadius < lowerStemThresh) {
+							weights[i] = 100000;
+						}
+						else {
+							weights[i] = gaussianFactor(avgRadius, 0.1);
+						}
+						edgeWeightMap[edgePairs[i]] = weights[i];
+					}
+				}
+
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
+				Graph g(vts.size());
+				property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
+				for (std::size_t j = 0; j < stemEdges.size(); ++j) {
+					Edge e; bool inserted;
+					boost::tie(e, inserted) = add_edge(stemEdges[j].v1, stemEdges[j].v2s, g);
+					weightmap[e] = weights[j];
+				}
+#else
+
+				Graph g(edgePairs, edgePairs + stemEdgesT.size(), weights, stemVerticesT.size());
+#endif
+				std::vector < Edge > spanning_tree;
+				map<int, int> vertBurnTimes;
+				kruskal_minimum_spanning_tree(g, std::back_inserter(spanning_tree));
+
+				stemEdgesT.clear(); stemEdgesT.shrink_to_fit();
+
+				float* mstWeights = new float[spanning_tree.size()];
+				E* spanningTreeEdges = new E[spanning_tree.size()];
+
+
+				vector< vector<E> > mstVertEdges(vts.size());
+				vector<internal::Edge> mstEdges;
+				for (int i = 0; i < spanning_tree.size(); i++) {
+					E edge = E(source(spanning_tree[i], g), target(spanning_tree[i], g));
+					spanningTreeEdges[i] = edge;
+					mstWeights[i] = edgeWeightMap[edge];
+					mstVertEdges[source(spanning_tree[i], g)].push_back(edge);
+					mstVertEdges[target(spanning_tree[i], g)].push_back(edge);
+					internal::Edge e;
+					e.v1 = source(spanning_tree[i], g); e.v2 = target(spanning_tree[i], g);
+					mstEdges.push_back(e);
+				}
+
+
+				//Minimum spanning tree of high radius region -> this is a boost object
+				Graph mst(spanningTreeEdges, spanningTreeEdges + spanning_tree.size(), mstWeights, stemVerticesT.size());
+
+				//Temporary structure to keep track of edges during burning process
+				Graph subGraph = mst;
+
+				//Start burning process
+				bool burnable = true;
+				int burnRound = 0;
+				vector< vector<E> > burnRoundMapping(100000);
+				vector< vector<int> > burnRoundMappingVts(100000);
+				vector<int> endPts;
+				while (burnable) {
+					vector<Edge> subgraphEdges;
+					burnable = false;
+					int burnableEdges = 0;
+					vector<Edge> burnedEdges;
+					for (int i = 0; i < spanning_tree.size(); i++) {
+
+						E edge = E(source(spanning_tree[i], subGraph), target(spanning_tree[i], subGraph));
+						spanningTreeEdges[i] = edge;
+
+						//Optional: I assigned a special weight for each edge based on the surrounding radii, but you can just use the average radius of the edge vertices
+						mstWeights[i] = edgeWeightMap[edge];
+
+						//Implicitly perform burning by only preserving edges that are not part of endpoints for the next burning iteration
+						if (subGraph.m_vertices[source(spanning_tree[i], subGraph)].m_out_edges.size() > 1 && subGraph.m_vertices[target(spanning_tree[i], subGraph)].m_out_edges.size() > 1) {
+							subgraphEdges.push_back(spanning_tree[i]);
+						}
+						else {
+							//Edge was burned this round: record the burn time of each edge
+							burnRoundMapping[burnRound].push_back(edge);
+
+							burnableEdges += 1;
+
+							//Record when vertices are burned as well
+							if (subGraph.m_vertices[source(spanning_tree[i], subGraph)].m_out_edges.size() == 1) {
+								vertBurnTimes[source(spanning_tree[i], subGraph)] = burnRound;
+								burnable = true;
+								burnRoundMappingVts[burnRound].push_back(source(spanning_tree[i], subGraph));
+							}
+							if (subGraph.m_vertices[target(spanning_tree[i], subGraph)].m_out_edges.size() == 1) {
+								vertBurnTimes[target(spanning_tree[i], subGraph)] = burnRound;
+								burnable = true;
+								burnRoundMappingVts[burnRound].push_back(target(spanning_tree[i], subGraph));
+							}
+							burnedEdges.push_back(spanning_tree[i]);
+
+						}
+					}
+					//For debugging
+					cout << "burnable edges " << burnableEdges << endl;
+
+					if (subgraphEdges.size() <= 1) {
+						burnable = false;
+					}
+					spanning_tree = subgraphEdges;
+					//Remove burned edges from the graph
+					for (int i = 0; i < burnedEdges.size(); i++) {
+						remove_edge(source(burnedEdges[i], subGraph), target(burnedEdges[i], subGraph), subGraph);
+					}
+					burnRound += 1;
+
+				}
+
+				//Start inverse burn
+				Graph diameterGraph;
+
+				vector<E> diameterEdgeVec = burnRoundMapping[burnRound - 1];
+
+				burnRound -= 1;
+
+				//Find the vertices which were burned this round. These are the endpoints of the current iteration to expand the stem from
+				vector<int> seedVertices = burnRoundMappingVts[burnRound];
+
+
+				vector< vector<int> > branchEdges;
+				int lowestSeedVert = 0;
+
+				while (burnRound > 0) {
+					cout << "burn round " << burnRound << endl;
+
+					//Record the vertices and edges which are currently in the stem
+					E* diameterEdges = new E[diameterEdgeVec.size()];
+					float* diameterWeights = new float[diameterEdgeVec.size()];
+					for (int i = 0; i < diameterEdgeVec.size(); i++) {
+						diameterEdges[i] = diameterEdgeVec[i];
+
+						//Optional part to weight edges based upon neighboring radii -> you dont need to include this
+						diameterWeights[i] = edgeWeightMap[diameterEdgeVec[i]];
+					}
+
+
+					vector<int> nextSeedVertices;
+					//Get edges for bordering vertices
+					for (int i = 0; i < seedVertices.size(); i++) {
+
+						//Add to stem
+						vertexInDiameter[stemToOrigVertexMapping[seedVertices[i]]] = true;
+						diameterVts.push_back(stemToOrigVertexMapping[seedVertices[i]]);
+						connectedVertexComponents[stemToOrigVertexMapping[seedVertices[i]]] = 1;
+
+						//Find edges adjacent to endpoints of stem so far
+						vector<E> vertEdges = mstVertEdges[seedVertices[i]];
+						float bestRadius = -1;
+						int bestSeed = -1;
+						E bestEdge;
+						//Choose edge whose other endpoint has highest radius, and whose burn time is one less than the current one
+						for (int j = 0; j < vertEdges.size(); j++) {
+							E edge = vertEdges[j];
+							int nextSeed = -1;
+							if (vertBurnTimes[edge.first] == burnRound - 1) {
+								nextSeed = edge.first;
+							}
+							if (vertBurnTimes[edge.second] == burnRound - 1) {
+								nextSeed = edge.second;
+							}
+							if (nextSeed != -1) {
+								if (vertexInDiameter.find(stemToOrigVertexMapping[nextSeed]) == vertexInDiameter.end()) {
+
+									if (stemVerticesT[nextSeed].inDiameter == 1) {
+
+										if (stemVerticesT[nextSeed].radius > bestRadius)
+										{
+											bestRadius = edgeWeightMap[edge];
+											bestSeed = nextSeed;
+											bestEdge = edge;
+										}
+									}
+									else {
+										//getRangeScore is just a scoring function for which vertex to choose to add to the stem. Just replace this with the vertex radius
+										//getRangeScore(mstVertEdges, nextSeed, stemVertices, vertexInDiameter, 5)
+										if (stemVerticesT[nextSeed].radius > bestRadius) {
+											bestRadius = edgeWeightMap[edge];
+											bestSeed = nextSeed;
+											bestEdge = edge;
+										}
+									}
+
+								}
+							}
+
+						}
+						if (bestSeed > -1) {
+							//Find edges for decremented burn time
+							nextSeedVertices.push_back(bestSeed);
+							diameterEdgeVec.push_back(bestEdge);
+
+						}
+
+					}
+
+					//Decrement burn time
+					seedVertices = nextSeedVertices;
+					burnRound -= 1;
+				}
+				spanning_tree.clear();
 			}
 
 		}
 	}
 
 	//Find high-radius connected component with the largest size
-	std::sort(potentialStemComponents.begin(), potentialStemComponents.end(), [](auto const& t1, auto const& t2) {
-		return get<2>(t1) > get<2>(t2);
-	}
-	);
+	//std::sort(potentialStemComponents.begin(), potentialStemComponents.end(), [](auto const& t1, auto const& t2) {
+		//return get<2>(t1) > get<2>(t2);
+	//}
+	//);
 
-	//For recording which vertices are in the stem (The stem is the graph diameter of the high radius region
-	map<int, bool> vertexInDiameter;
-	vector<int> diameterVts;
-	std::cout << "stem components " << potentialStemComponents.size() << std::endl;
+	
+	/**std::cout << "stem components " << potentialStemComponents.size() << std::endl;
 	for (int s = 0; s < potentialStemComponents.size(); s++) {
 		vector<int> stemEdgesT = get<1>(potentialStemComponents[s]);
 
-		std::vector<VertexWithMsure> stemVerticesT;
-		std::vector<internal::Edge> stemEdgesRT;
-		std::vector<internal::Face> stemFacesT;
-
-
-		std::map<int, int> oldToNewVtIndex;
-
-
-		std::vector<E> stemEdgesReindexed;
-
-		//vector<float> weights;
-		float* weights = new float[stemEdgesT.size()];
-
-		E* edgePairs = new E[stemEdgesT.size()];
-		map<E, float> edgeWeightMap;
-		map<int, int> stemToOrigVertexMapping;
-		for (int i = 0; i < stemEdgesT.size(); i++) {
-			if (oldToNewVtIndex.find(edges[stemEdgesT[i]].v1) == oldToNewVtIndex.end()) {
-				oldToNewVtIndex[edges[stemEdgesT[i]].v1] = stemVerticesT.size();
-				stemToOrigVertexMapping[stemVerticesT.size()] = edges[stemEdgesT[i]].v1;
-				stemVerticesT.push_back(vts[edges[stemEdgesT[i]].v1]);
-				stemVerticesT[stemVerticesT.size() - 1].width = 1;
-			}
-			if (oldToNewVtIndex.find(edges[stemEdgesT[i]].v2) == oldToNewVtIndex.end()) {
-				oldToNewVtIndex[edges[stemEdgesT[i]].v2] = stemVerticesT.size();
-				stemToOrigVertexMapping[stemVerticesT.size()] = edges[stemEdgesT[i]].v2;
-				stemVerticesT.push_back(vts[edges[stemEdgesT[i]].v2]);
-				stemVerticesT[stemVerticesT.size() - 1].width = 1;
-			}
-			internal::Edge newE = edges[stemEdgesT[i]];
-			newE.v1 = oldToNewVtIndex[edges[stemEdgesT[i]].v1];
-			newE.v2 = oldToNewVtIndex[edges[stemEdgesT[i]].v2];
-			edgePairs[i] = E(newE.v1, newE.v2);
-			stemEdgesRT.push_back(newE);
-
-			if (stemVerticesT[newE.v1].inDiameter == 1 || stemVerticesT[newE.v2].inDiameter == 1) {
-				weights[i] = 0.0;
-			}
-			else {
-				float avgRadius = (stemVerticesT[newE.v1].radius + stemVerticesT[newE.v2].radius) / 2.0;
-				if (avgRadius < lowerStemThresh) {
-					weights[i] = 100000;
-				}
-				else {
-					weights[i] = gaussianFactor(avgRadius, 0.1);
-				}
-				edgeWeightMap[edgePairs[i]] = weights[i];
-			}
-		}
-
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-		Graph g(vts.size());
-		property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
-		for (std::size_t j = 0; j < stemEdges.size(); ++j) {
-			Edge e; bool inserted;
-			boost::tie(e, inserted) = add_edge(stemEdges[j].v1, stemEdges[j].v2s, g);
-			weightmap[e] = weights[j];
-		}
-#else
-
-		Graph g(edgePairs, edgePairs + stemEdgesT.size(), weights, stemVerticesT.size());
-#endif
-		std::vector < Edge > spanning_tree;
-		map<int, int> vertBurnTimes;
-		kruskal_minimum_spanning_tree(g, std::back_inserter(spanning_tree));
-
-		stemEdgesT.clear(); stemEdgesT.shrink_to_fit();
-
-		float* mstWeights = new float[spanning_tree.size()];
-		E* spanningTreeEdges = new E[spanning_tree.size()];
-
-
-		vector< vector<E> > mstVertEdges(vts.size());
-		vector<internal::Edge> mstEdges;
-		for (int i = 0; i < spanning_tree.size(); i++) {
-			E edge = E(source(spanning_tree[i], g), target(spanning_tree[i], g));
-			spanningTreeEdges[i] = edge;
-			mstWeights[i] = edgeWeightMap[edge];
-			mstVertEdges[source(spanning_tree[i], g)].push_back(edge);
-			mstVertEdges[target(spanning_tree[i], g)].push_back(edge);
-			internal::Edge e;
-			e.v1 = source(spanning_tree[i], g); e.v2 = target(spanning_tree[i], g);
-			mstEdges.push_back(e);
-		}
-
-
-		//Minimum spanning tree of high radius region -> this is a boost object
-		Graph mst(spanningTreeEdges, spanningTreeEdges + spanning_tree.size(), mstWeights, stemVerticesT.size());
-
-		//Temporary structure to keep track of edges during burning process
-		Graph subGraph = mst;
-
-		//Start burning process
-		bool burnable = true;
-		int burnRound = 0;
-		vector< vector<E> > burnRoundMapping(100000);
-		vector< vector<int> > burnRoundMappingVts(100000);
-		vector<int> endPts;
-		while (burnable) {
-			vector<Edge> subgraphEdges;
-			burnable = false;
-			int burnableEdges = 0;
-			vector<Edge> burnedEdges;
-			for (int i = 0; i < spanning_tree.size(); i++) {
-
-				E edge = E(source(spanning_tree[i], subGraph), target(spanning_tree[i], subGraph));
-				spanningTreeEdges[i] = edge;
-
-				//Optional: I assigned a special weight for each edge based on the surrounding radii, but you can just use the average radius of the edge vertices
-				mstWeights[i] = edgeWeightMap[edge];
-
-				//Implicitly perform burning by only preserving edges that are not part of endpoints for the next burning iteration
-				if (subGraph.m_vertices[source(spanning_tree[i], subGraph)].m_out_edges.size() > 1 && subGraph.m_vertices[target(spanning_tree[i], subGraph)].m_out_edges.size() > 1) {
-					subgraphEdges.push_back(spanning_tree[i]);
-				}
-				else {
-					//Edge was burned this round: record the burn time of each edge
-					burnRoundMapping[burnRound].push_back(edge);
-
-					burnableEdges += 1;
-
-					//Record when vertices are burned as well
-					if (subGraph.m_vertices[source(spanning_tree[i], subGraph)].m_out_edges.size() == 1) {
-						vertBurnTimes[source(spanning_tree[i], subGraph)] = burnRound;
-						burnable = true;
-						burnRoundMappingVts[burnRound].push_back(source(spanning_tree[i], subGraph));
-					}
-					if (subGraph.m_vertices[target(spanning_tree[i], subGraph)].m_out_edges.size() == 1) {
-						vertBurnTimes[target(spanning_tree[i], subGraph)] = burnRound;
-						burnable = true;
-						burnRoundMappingVts[burnRound].push_back(target(spanning_tree[i], subGraph));
-					}
-					burnedEdges.push_back(spanning_tree[i]);
-
-				}
-			}
-			//For debugging
-			cout << "burnable edges " << burnableEdges << endl;
-
-			if (subgraphEdges.size() <= 1) {
-				burnable = false;
-			}
-			spanning_tree = subgraphEdges;
-			//Remove burned edges from the graph
-			for (int i = 0; i < burnedEdges.size(); i++) {
-				remove_edge(source(burnedEdges[i], subGraph), target(burnedEdges[i], subGraph), subGraph);
-			}
-			burnRound += 1;
-
-		}
-
-		//Start inverse burn
-		Graph diameterGraph;
-
-		vector<E> diameterEdgeVec = burnRoundMapping[burnRound - 1];
-
-		burnRound -= 1;
-
-		//Find the vertices which were burned this round. These are the endpoints of the current iteration to expand the stem from
-		vector<int> seedVertices = burnRoundMappingVts[burnRound];
-
 		
-		vector< vector<int> > branchEdges;
-		int lowestSeedVert = 0;
-
-		while (burnRound > 0) {
-			cout << "burn round " << burnRound << endl;
-
-			//Record the vertices and edges which are currently in the stem
-			E* diameterEdges = new E[diameterEdgeVec.size()];
-			float* diameterWeights = new float[diameterEdgeVec.size()];
-			for (int i = 0; i < diameterEdgeVec.size(); i++) {
-				diameterEdges[i] = diameterEdgeVec[i];
-
-				//Optional part to weight edges based upon neighboring radii -> you dont need to include this
-				diameterWeights[i] = edgeWeightMap[diameterEdgeVec[i]];
-			}
-
-
-			vector<int> nextSeedVertices;
-			//Get edges for bordering vertices
-			for (int i = 0; i < seedVertices.size(); i++) {
-
-				//Add to stem
-				vertexInDiameter[stemToOrigVertexMapping[seedVertices[i]]] = true;
-				diameterVts.push_back(stemToOrigVertexMapping[seedVertices[i]]);
-
-				//Find edges adjacent to endpoints of stem so far
-				vector<E> vertEdges = mstVertEdges[seedVertices[i]];
-				float bestRadius = -1;
-				int bestSeed = -1;
-				E bestEdge;
-				//Choose edge whose other endpoint has highest radius, and whose burn time is one less than the current one
-				for (int j = 0; j < vertEdges.size(); j++) {
-					E edge = vertEdges[j];
-					int nextSeed = -1;
-					if (vertBurnTimes[edge.first] == burnRound - 1) {
-						nextSeed = edge.first;
-					}
-					if (vertBurnTimes[edge.second] == burnRound - 1) {
-						nextSeed = edge.second;
-					}
-					if (nextSeed != -1) {
-						if (vertexInDiameter.find(stemToOrigVertexMapping[nextSeed]) == vertexInDiameter.end()) {
-
-							if (stemVerticesT[nextSeed].inDiameter == 1) {
-
-								if (stemVerticesT[nextSeed].radius > bestRadius)
-								{
-									bestRadius = edgeWeightMap[edge];
-									bestSeed = nextSeed;
-									bestEdge = edge;
-								}
-							}
-							else {
-								//getRangeScore is just a scoring function for which vertex to choose to add to the stem. Just replace this with the vertex radius
-								//getRangeScore(mstVertEdges, nextSeed, stemVertices, vertexInDiameter, 5)
-								if (stemVerticesT[nextSeed].radius > bestRadius) {
-									bestRadius = edgeWeightMap[edge];
-									bestSeed = nextSeed;
-									bestEdge = edge;
-								}
-							}
-
-						}
-					}
-
-				}
-				if (bestSeed > -1) {
-					//Find edges for decremented burn time
-					nextSeedVertices.push_back(bestSeed);
-					diameterEdgeVec.push_back(bestEdge);
-
-				}
-
-			}
-
-			//Decrement burn time
-			seedVertices = nextSeedVertices;
-			burnRound -= 1;
-		}
-		spanning_tree.clear();
-	}
+	}**/
 	std::cout << "diameterVts size " << diameterVts.size() << std::endl;
 	//Find distances from highest radius point to all other points
 	cout << "Forcing highest radius endpoint to be on stem" << endl;

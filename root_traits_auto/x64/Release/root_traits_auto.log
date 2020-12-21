@@ -44,50 +44,50 @@ C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto
 C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(507,31): warning C4305: 'initializing': truncation from 'double' to 'float'
 C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(508,31): warning C4305: 'initializing': truncation from 'double' to 'float'
 C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(657,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(743,68): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(744,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(749,68): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(750,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(764,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(769,48): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(806,38): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(806,74): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(848,55): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(850,82): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(730,70): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(731,51): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(736,70): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(737,51): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(751,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(756,50): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(793,40): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(793,76): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(835,57): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(837,84): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(853,55): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(855,82): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(840,57): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(842,84): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
           with
           [
               _Ty=int
           ]
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1111,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1364,48): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1367,127): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1467,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1517,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1522,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1527,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1531,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1547,46): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1562,72): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1680,24): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1116,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1369,48): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1372,127): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1472,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1522,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1527,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1532,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1536,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1552,46): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1567,72): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1685,24): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,1): warning C4267: 'initializing': conversion from 'size_t' to '_Ty1', possible loss of data
           with
           [
               _Ty1=int
           ]
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(800): message : see reference to function template instantiation 'std::pair<int,int>::pair<Vertex,Vertex,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(787): message : see reference to function template instantiation 'std::pair<int,int>::pair<Vertex,Vertex,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               Vertex=unsigned __int64,
               _Other1=unsigned __int64,
               _Other2=unsigned __int64
           ]
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(800): message : see reference to function template instantiation 'std::pair<int,int>::pair<Vertex,Vertex,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(787): message : see reference to function template instantiation 'std::pair<int,int>::pair<Vertex,Vertex,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               Vertex=unsigned __int64,
@@ -100,13 +100,13 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
               _Ty2=int
           ]
 C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1827,44): warning C4838: conversion from 'unsigned __int64' to 'const int' requires a narrowing conversion
-C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1157): message : see reference to function template instantiation 'ply::status ply::PLYwriter::write<VertexWithMsure,internal::Edge,internal::Face>(const char *,bool,bool,bool,const std::map<std::string,PlyProperty,std::less<std::string>,std::allocator<std::pair<const std::string,PlyProperty>>> &,const std::map<std::string,PlyProperty,std::less<std::string>,std::allocator<std::pair<const std::string,PlyProperty>>> &,const std::map<std::string,PlyProperty,std::less<std::string>,std::allocator<std::pair<const std::string,PlyProperty>>> &,const std::vector<VertexWithMsure,std::allocator<VertexWithMsure>> &,const std::vector<internal::Edge,std::allocator<internal::Edge>> &,const std::vector<internal::Face,std::allocator<internal::Face>> &)' being compiled
+C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto\root_traits_auto.cpp(1162): message : see reference to function template instantiation 'ply::status ply::PLYwriter::write<VertexWithMsure,internal::Edge,internal::Face>(const char *,bool,bool,bool,const std::map<std::string,PlyProperty,std::less<std::string>,std::allocator<std::pair<const std::string,PlyProperty>>> &,const std::map<std::string,PlyProperty,std::less<std::string>,std::allocator<std::pair<const std::string,PlyProperty>>> &,const std::map<std::string,PlyProperty,std::less<std::string>,std::allocator<std::pair<const std::string,PlyProperty>>> &,const std::vector<VertexWithMsure,std::allocator<VertexWithMsure>> &,const std::vector<internal::Edge,std::allocator<internal::Edge>> &,const std::vector<internal::Face,std::allocator<internal::Face>> &)' being compiled
 C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1827,1): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
 C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1827,68): warning C4838: conversion from 'unsigned __int64' to 'const int' requires a narrowing conversion
 C:\Users\danzeng\source\repos\root_traits_auto\third_party\ply\include\plyall.h(1827,92): warning C4838: conversion from 'unsigned __int64' to 'const int' requires a narrowing conversion
   Generating code
-  1 of 3533 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+  164 of 3446 functions ( 4.8%) were compiled, the rest were copied from previous compilation.
+    21 functions were new in current compilation
+    203 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   root_traits_auto.vcxproj -> C:\Users\danzeng\source\repos\root_traits_auto\root_traits_auto.exe
