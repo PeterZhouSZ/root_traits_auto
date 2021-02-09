@@ -104,29 +104,29 @@ void fillComponentIterative(std::map<int, int>& visitedMap, int i, std::map<int,
 		int node = vQ.front();
 		vQ.pop();
 		//if (visitedMap.find(node) == visitedMap.end()) {
-			visitedMap[node] = true;
-			newVertComp.push_back(node);
-			for (int j = 0; j < vertEdgeMapping[node].size(); j++) {
+		visitedMap[node] = true;
+		newVertComp.push_back(node);
+		for (int j = 0; j < vertEdgeMapping[node].size(); j++) {
 
-				int eIndex = vertEdgeMapping[node][j];
-				//Choose endpoint of edge which hasn't been visited yet
-				if (visitedMap.find(edges[eIndex].v1) == visitedMap.end()) {
-					//Stop visiting edges when radius decreases below threshold
-					if (vts[edges[eIndex].v1].radius > lowerRadiiThresh) {
-						newEdgeComp.push_back(eIndex);
+			int eIndex = vertEdgeMapping[node][j];
+			//Choose endpoint of edge which hasn't been visited yet
+			if (visitedMap.find(edges[eIndex].v1) == visitedMap.end()) {
+				//Stop visiting edges when radius decreases below threshold
+				if (vts[edges[eIndex].v1].radius > lowerRadiiThresh) {
+					newEdgeComp.push_back(eIndex);
 
-						vQ.push(edges[eIndex].v1);
-					}
-				}
-
-				if (visitedMap.find(edges[eIndex].v2) == visitedMap.end()) {
-					//Stop visiting edges when radius decreases below threshold
-					if (vts[edges[eIndex].v2].radius > lowerRadiiThresh) {
-						newEdgeComp.push_back(eIndex);
-						vQ.push(edges[eIndex].v2);
-					}
+					vQ.push(edges[eIndex].v1);
 				}
 			}
+
+			if (visitedMap.find(edges[eIndex].v2) == visitedMap.end()) {
+				//Stop visiting edges when radius decreases below threshold
+				if (vts[edges[eIndex].v2].radius > lowerRadiiThresh) {
+					newEdgeComp.push_back(eIndex);
+					vQ.push(edges[eIndex].v2);
+				}
+			}
+		}
 		//}
 	}
 
@@ -221,14 +221,14 @@ float getRangeScore(vector< vector<E> >& mstVertexEdges, int seedVertex, vector<
 
 
 //Return next forking point, find length of this segment
-int travelSegment(Graph& g, vector<bool>& visited, vector<int>& depthMap, int i, int depth, std::vector<VertexWithMsure>& vts, std::vector<Branch> & branches, int branchIndex ,
-	std::vector<float> & dir, map<int, int>& branchPtr
-	) {
+int travelSegment(Graph& g, vector<bool>& visited, vector<int>& depthMap, int i, int depth, std::vector<VertexWithMsure>& vts, std::vector<Branch>& branches, int branchIndex,
+	std::vector<float>& dir, map<int, int>& branchPtr
+) {
 	std::queue<int> q;
 	q.push(i);
 	int fork = i;
 	branches[branchIndex].tip = i;
-	
+
 	std::vector<int> path;
 	while (!q.empty()) {
 		int v = q.front();
@@ -263,12 +263,12 @@ int travelSegment(Graph& g, vector<bool>& visited, vector<int>& depthMap, int i,
 			}**/
 		}
 	}
-	dir = { vts[path.size()-1].x - vts[path[0]].x, vts[path.size() - 1].y - vts[path[0]].y, vts[path.size() - 1].z - vts[path[0]].z };
+	dir = { vts[path.size() - 1].x - vts[path[0]].x, vts[path.size() - 1].y - vts[path[0]].y, vts[path.size() - 1].z - vts[path[0]].z };
 	return fork;
 }
 
 void updateSubtree(Graph& g, vector<int>& depthMap, int i, int depth, std::vector<VertexWithMsure>& vts, map<int, int>& branchPtr,
-	int parentBranchIndex, std::vector<Branch> & branches) {
+	int parentBranchIndex, std::vector<Branch>& branches) {
 	std::queue<int> q;
 	q.push(i);
 	map<int, bool> visited;
@@ -295,10 +295,10 @@ void updateSubtree(Graph& g, vector<int>& depthMap, int i, int depth, std::vecto
 			}
 		}
 		depthMap[v] = depthMap[v] - 1;
-		
+
 		//std::cout << "decremented to " << v << " to " << depthMap[v] << std::endl;
 		vts[v].width = vts[v].width - 1;
-		
+
 		visited[v] = true;
 		auto neighbours = adjacent_vertices(v, g);
 		for (auto u : make_iterator_range(neighbours)) {
@@ -331,11 +331,11 @@ void normalize(std::vector<float>& vec) {
 	}
 }
 
-int buildHierarchy(Graph& g, vector<bool> & visited, vector<int> & depthMap, int i, int depth, std::vector<VertexWithMsure> & vts, 
-	std::vector<float> & outDir, std::vector<Branch> & branches, int parentBranch, map<int, int> & branchPtr) {
+int buildHierarchy(Graph& g, vector<bool>& visited, vector<int>& depthMap, int i, int depth, std::vector<VertexWithMsure>& vts,
+	std::vector<float>& outDir, std::vector<Branch>& branches, int parentBranch, map<int, int>& branchPtr) {
 	std::vector<float> dir(3, 0);
 	int fork = travelSegment(g, visited, depthMap, i, depth, vts, branches, parentBranch, dir, branchPtr);
-	
+
 	outDir = dir;
 	auto neighbours = adjacent_vertices(fork, g);
 	int maxDepth = depth;
@@ -356,10 +356,10 @@ int buildHierarchy(Graph& g, vector<bool> & visited, vector<int> & depthMap, int
 			child.valid = true;
 			branches.push_back(child);
 			potentialBranches.push_back(branches.size() - 1);
-			int topoDepth = buildHierarchy(g, visited, depthMap, u, child.level, vts, subDir, branches, branches.size()-1, branchPtr);
+			int topoDepth = buildHierarchy(g, visited, depthMap, u, child.level, vts, subDir, branches, branches.size() - 1, branchPtr);
 			float subAngle = angle(outDir, subDir);
-			float score = gaussianFactor(subAngle, 0.3) * branches[potentialBranches[potentialBranches.size()-1]].length;
-			
+			float score = gaussianFactor(subAngle, 0.3) * branches[potentialBranches[potentialBranches.size() - 1]].length;
+
 			if (topoDepth > maxDepth) {
 				maxDepth = topoDepth;
 				bestPathRoot = u;
@@ -369,7 +369,7 @@ int buildHierarchy(Graph& g, vector<bool> & visited, vector<int> & depthMap, int
 			}
 			else {
 				if (topoDepth == maxDepth) {
-					if(score > bestScore) {
+					if (score > bestScore) {
 						maxDepth = topoDepth;
 						bestPathRoot = u;
 						bestSubLength = child.length;
@@ -400,7 +400,7 @@ int buildHierarchy(Graph& g, vector<bool> & visited, vector<int> & depthMap, int
 				branches[parentBranch].length = branches[parentBranch].length + branches[potentialBranches[j]].length;
 				branches[parentBranch].tipGeodesicDepth = branches[potentialBranches[j]].tipGeodesicDepth;
 				branches[parentBranch].tip = branches[potentialBranches[j]].tip;
-				
+
 
 				for (int k = 0; k < branches[potentialBranches[j]].positions.size(); k++) {
 					branches[parentBranch].positions.push_back(branches[potentialBranches[j]].positions[k]);
@@ -414,13 +414,13 @@ int buildHierarchy(Graph& g, vector<bool> & visited, vector<int> & depthMap, int
 	}
 
 	return maxDepth;
-	
+
 }
 
 
 /**
 void buildBranchesFromJunction(Graph& g, vector<bool>& visited, vector<int>& depthMap, int stemIndex, int i, int depth, std::vector<VertexWithMsure>& vts,  float radiusTolerance) {
-	
+
 	std::queue<int> q;
 	q.push(i);
 	while (!q.empty()) {
@@ -440,7 +440,7 @@ void buildBranchesFromJunction(Graph& g, vector<bool>& visited, vector<int>& dep
 			visited[v] = true;
 			vts[v].width = depth+1;
 			auto neighbours = adjacent_vertices(v, g);
-			for (auto u : make_iterator_range(neighbours)) 
+			for (auto u : make_iterator_range(neighbours))
 			{
 				if (!visited[u]) {
 					q.push(u);
@@ -453,7 +453,7 @@ void buildBranchesFromJunction(Graph& g, vector<bool>& visited, vector<int>& dep
 	//}
 }**/
 
-void findStemSeeds(Graph& g, vector<bool>& visited, vector<int>& depthMap, int stemIndex, int i, int depth, std::vector<VertexWithMsure>& vts, float radiusTolerance, std::vector<int> & stemSeeds, std::vector<int> & junctions) {
+void findStemSeeds(Graph& g, vector<bool>& visited, vector<int>& depthMap, int stemIndex, int i, int depth, std::vector<VertexWithMsure>& vts, float radiusTolerance, std::vector<int>& stemSeeds, std::vector<int>& junctions) {
 
 	std::queue<int> q;
 	q.push(i);
@@ -533,7 +533,7 @@ int main(int argc, char** argv)
 			if (arg == "lowerRadius") {
 				lowerRadiusRatio = stof(argv[i + 1]);
 			}
-			
+
 			if (arg == "branch") {
 				branch = true;
 			}
@@ -569,13 +569,13 @@ int main(int argc, char** argv)
 	{ (char*)"y", Float32, Float32, offsetof(VertexWithMsure, y), 0, 0, 0, 0 },
 	{ (char*)"z", Float32, Float32, offsetof(VertexWithMsure, z), 0, 0, 0, 0 }
 	};
-	
+
 	v_props_map["radius"] = v_props[0];
 	v_props_map["bt2"] = v_props[1];
 	v_props_map["x"] = v_props[2];
 	v_props_map["y"] = v_props[3];
 	v_props_map["z"] = v_props[4];
-	
+
 	std::map<std::string, PlyProperty> e_props_map;
 	PlyProperty e_props[] = {
 		{ (char*)"vertex1", Int32, Int32, offsetof(internal::Edge, v1), PLY_SCALAR, 0, 0, 0 },
@@ -625,9 +625,9 @@ int main(int argc, char** argv)
 		}
 		totalDistance += euclideanDistance(vts[edges[i].v1], vts[edges[i].v2]);
 
-		
+
 	}
-	
+
 	int highestRadEndPt = -1;
 	int highestRadPt = 0;
 	int numEndPts = 0;
@@ -657,7 +657,7 @@ int main(int argc, char** argv)
 	lowerStemThresh = 0.1 * highestRadius;
 
 	std::cout << vts[highestRadPt].radius << " " << highestRadPt << std::endl;
- 
+
 	int maxRadiusVtIndex = 0;
 	for (int i = 0; i < vts.size(); i++) {
 		if (vts[i].radius > upperRadiiThresh) {
@@ -963,12 +963,12 @@ int main(int argc, char** argv)
 	//}
 	//);
 
-	
+
 	/**std::cout << "stem components " << potentialStemComponents.size() << std::endl;
 	for (int s = 0; s < potentialStemComponents.size(); s++) {
 		vector<int> stemEdgesT = get<1>(potentialStemComponents[s]);
 
-		
+
 	}**/
 	std::cout << "diameterVts size " << diameterVts.size() << std::endl;
 	//Find distances from highest radius point to all other points
@@ -1048,16 +1048,16 @@ int main(int argc, char** argv)
 					cout << "pt updated " << firstEndPt << endl;
 				}
 			}
-			
+
 		}
-		cout << minX << " " << maxX << " " << minY << " " << maxY << " " << minZ << " " << maxZ << 
+		cout << minX << " " << maxX << " " << minY << " " << maxY << " " << minZ << " " << maxZ <<
 			" " <<  vts[maxRadiusPt].x << " " << vts[maxRadiusPt].y << " " << vts[maxRadiusPt].z <<
 			" " << vts[firstEndPt].x << " " << vts[firstEndPt].y << " " << vts[firstEndPt].z <<
-			" " << firstEndPt << 
+			" " << firstEndPt <<
 			endl;**/
-		//for (int i = 0; i < vts.size(); i++) {
-		//	vts[i].width = 0;
-		//}
+			//for (int i = 0; i < vts.size(); i++) {
+			//	vts[i].width = 0;
+			//}
 		for (int i = 0; i < diameterVts.size(); i++) {
 			//vts[i].stem = 1;
 			vts[diameterVts[i]].stem = 1;
@@ -1083,7 +1083,7 @@ int main(int argc, char** argv)
 			}**/
 			//cout << "vtx stem " << diameterVts[i] << " " << vts[diameterVts[i]].stem << " " << vts[diameterVts[i]].radius << endl;
 		}
-		
+
 		for (int i = 0; i < vts.size(); i++) {
 			if (vts[i].radius > lowerRadiiThresh) {
 				vts[i].stem = 1;
@@ -1297,7 +1297,7 @@ int main(int argc, char** argv)
 	}
 	std::cout << std::endl;**/
 
-	
+
 	std::vector<int> stemSeeds; std::vector<int> junctions;
 	for (int i = 0; i < diameterVts.size(); i++) {
 		//Temporary hack assigning stem hierarchy depth to 0
@@ -1322,7 +1322,7 @@ int main(int argc, char** argv)
 					float length = 0.0;
 					//Build primary branches from this junction
 					//if (!visitedVts[junctionIndex]) {
-						findStemSeeds(gOriginal, visitedVts, depthMap, diameterVts[i], junctionIndex, 0, vts, radiusTolerance, stemSeeds, junctions);
+					findStemSeeds(gOriginal, visitedVts, depthMap, diameterVts[i], junctionIndex, 0, vts, radiusTolerance, stemSeeds, junctions);
 
 					//}
 				}
@@ -1369,7 +1369,7 @@ int main(int argc, char** argv)
 		branchPtr[stemSeeds[i]] = branches.size() - 1;
 		//float length = 0.0;
 		std::vector<float> dir = { vts[stemSeeds[i]].x - vts[junctions[i]].x, vts[stemSeeds[i]].y - vts[junctions[i]].y, vts[stemSeeds[i]].z - vts[junctions[i]].z };
-		buildHierarchy(gOriginal, visitedVts, depthMap, stemSeeds[i], branch.level, vts, dir, branches, branches.size()-1, branchPtr);
+		buildHierarchy(gOriginal, visitedVts, depthMap, stemSeeds[i], branch.level, vts, dir, branches, branches.size() - 1, branchPtr);
 	}
 
 	struct levelStat {
@@ -1385,6 +1385,7 @@ int main(int argc, char** argv)
 		float tipAngle = 0.0;
 		float emergenceAngle = 0.0;
 		float midpointAngle = 0.0;
+		float numChildren;
 	};
 	map<int, levelStat> levelStats;
 	std::ofstream outStream;
@@ -1401,6 +1402,7 @@ int main(int argc, char** argv)
 	}
 	int branchIndex = 0;
 	float totalEuclid = 0.0;
+	float totalNumChildren = 0.0;
 	for (int i = 0; i < branches.size(); i++) {
 		if (branches[i].valid && branches[i].positions.size() > 10 && branches[i].level <= maxLevel) {
 			branchIndex++;
@@ -1409,7 +1411,7 @@ int main(int argc, char** argv)
 				branches[i].length -= vts[branches[i].fork].radius; //Subtract part of skeleton that was within stem
 			}
 			branches[i].avgRadius = branches[i].avgRadius / branches[i].positions.size();
-			
+
 			float euclideanDist = euclideanDistance(vts[branches[i].tip], vts[branches[i].fork]);
 			totalEuclid += euclideanDist;
 
@@ -1425,17 +1427,17 @@ int main(int argc, char** argv)
 			alglib::real_2d_array eigVectorsB;
 			alglib::real_2d_array ptInputB;
 
-			double* branchVtArr = new double[(branches[i].positions.size()+1) * 3];
+			double* branchVtArr = new double[(branches[i].positions.size() + 1) * 3];
 			branchVtArr[0] = (double)vts[branches[i].fork].x;
 			branchVtArr[1] = (double)vts[branches[i].fork].y;
 			branchVtArr[2] = (double)vts[branches[i].fork].z;
 			for (int o = 0; o < branches[i].positions.size(); o++) {
-				branchVtArr[3 * (o+1)] = (double)vts[branches[i].positions[o]].x;
-				branchVtArr[3 * (o+1) + 1] = (double)vts[branches[i].positions[o]].y;
-				branchVtArr[3 * (o+1) + 2] = (double)vts[branches[i].positions[o]].z;
+				branchVtArr[3 * (o + 1)] = (double)vts[branches[i].positions[o]].x;
+				branchVtArr[3 * (o + 1) + 1] = (double)vts[branches[i].positions[o]].y;
+				branchVtArr[3 * (o + 1) + 2] = (double)vts[branches[i].positions[o]].z;
 			}
 
-			ptInputB.setcontent(branches[i].positions.size() , 3, branchVtArr);
+			ptInputB.setcontent(branches[i].positions.size(), 3, branchVtArr);
 			// perform the analysis
 			pcabuildbasis(ptInputB, branches[i].positions.size(), 3, infoB, eigValuesB, eigVectorsB);
 			// now the vectors can be accessed as follows:
@@ -1451,13 +1453,13 @@ int main(int argc, char** argv)
 			//double basis2_yB = eigVectorsB[1][2];
 			//double basis2_zB = eigVectorsB[2][2];
 			//, (float)basis1_xB , (float)basis1_yB,  (float)basis1_zB, (float)basis2_xB , (float)basis2_yB, (float)basis2_zB 
-			vector<float> pca = { (float)basis0_xB , (float)basis0_yB, (float)basis0_zB};
+			vector<float> pca = { (float)basis0_xB , (float)basis0_yB, (float)basis0_zB };
 
-			VertexWithMsure forkPlusPca; 
+			VertexWithMsure forkPlusPca;
 			forkPlusPca.x = vts[branches[i].fork].x + pca[0];
 			forkPlusPca.y = vts[branches[i].fork].y + pca[1];
 			forkPlusPca.z = vts[branches[i].fork].z + pca[2];
-			
+
 			VertexWithMsure forkMinusPca;
 			forkMinusPca.x = vts[branches[i].fork].x - pca[0];
 			forkMinusPca.y = vts[branches[i].fork].y - pca[1];
@@ -1522,15 +1524,15 @@ int main(int argc, char** argv)
 				parentAngle = (180.0 / M_PI) * angle(pcaP, pca);
 
 			}
-			std::vector<float> tipVec = {vts[branches[i].tip].x - vts[branches[i].fork].x, vts[branches[i].tip].y - vts[branches[i].fork].y , vts[branches[i].tip].z - vts[branches[i].fork].z };
+			std::vector<float> tipVec = { vts[branches[i].tip].x - vts[branches[i].fork].x, vts[branches[i].tip].y - vts[branches[i].fork].y , vts[branches[i].tip].z - vts[branches[i].fork].z };
 			normalize(tipVec);
 			float tipAngle = (180.0 / M_PI) * angle(vertDirection, tipVec);
-			
+
 			//Emergence angle goes 30 vts in
-			int emergenceVts = min((int)branches[i].positions.size()-1, 29);
+			int emergenceVts = min((int)branches[i].positions.size() - 1, 29);
 			std::vector<float> emergenceVec = { vts[branches[i].positions[emergenceVts]].x - vts[branches[i].fork].x, vts[branches[i].positions[emergenceVts]].y - vts[branches[i].fork].y, vts[branches[i].positions[emergenceVts]].z - vts[branches[i].fork].z };
 			float emergenceAngle = (180.0 / M_PI) * angle(vertDirection, emergenceVec);
-			
+
 			int midway = min((int)branches[i].positions.size() - 1, (int)ceil((float)branches[i].positions.size() / (float)2.0));
 			std::vector<float> midVec = { vts[branches[i].positions[midway]].x - vts[branches[i].fork].x, vts[branches[i].positions[midway]].y - vts[branches[i].fork].y, vts[branches[i].positions[midway]].z - vts[branches[i].fork].z };
 			float midAngle = (180.0 / M_PI) * angle(vertDirection, midVec);
@@ -1571,7 +1573,9 @@ int main(int argc, char** argv)
 				levelStats[branches[i].level].tipAngle += tipAngle;
 				levelStats[branches[i].level].emergenceAngle += emergenceAngle;
 				levelStats[branches[i].level].midpointAngle += midAngle;
+				levelStats[branches[i].level].numChildren += branches[i].children.size();
 			}
+			totalNumChildren += branches[i].children.size();
 		}
 	}
 	//outStream << "" << endl;
@@ -1609,10 +1613,11 @@ int main(int argc, char** argv)
 		levelStats[i].tipAngle /= levelStats[i].branchCount;
 		levelStats[i].emergenceAngle /= levelStats[i].branchCount;
 		levelStats[i].midpointAngle /= levelStats[i].branchCount;
+		levelStats[i].numChildren /= levelStats[i].branchCount;
 		outStream << levelStats[i].branchCount << "," << levelStats[i].length << "," << levelStats[i].geodesicDepth
 			<< "," << levelStats[i].avgRadius << "," << levelStats[i].edges << "," << levelStats[i].tortuosity
 			<< "," << levelStats[i].gravityAngle << "," << levelStats[i].parentAngle << "," << levelStats[i].tipAngle << "," << levelStats[i].emergenceAngle
-			<< "," << levelStats[i].midpointAngle << ",";
+			<< "," << levelStats[i].midpointAngle << "," << levelStats[i].numChildren << ",";
 	}
 	//outStream << "Per-node statistics" << endl;
 	//outStream << "Branch Count, Average Length, Average Geodesic depth, Average Radius, Total skeleton edges, Average Tortuosity, 1-Branch Count, 1-Branch Total Length, 1-Branch Avg. Length, 1-Branch Geodesic Depth, 1-Branch Average Radius, 1-Branch skeleton edges, 1-Branch Average Tortuosity, 2-Branch Count, 2-Branch Total Length, 2-Branch Avg. Length, 2-Branch Geodesic Depth, 2-Branch Average Radius, 2-Branch skeleton edges, 2-Branch Average Tortuosity, 3-Branch Count, 3-Branch Total Length, 3-Branch Avg. Length, 3-Branch Geodesic Depth, 3-Branch Average Radius, 3-Branch skeleton edges, 3-Branch Average Tortuosity, 4-Branch Count, 4-Branch Total Length, 4-Branch Avg. Length, 4-Branch Geodesic Depth, 4-Branch Average Radius, 4-Branch skeleton edges, 4-Branch Average Tortuosity, 5-Branch Count, 5-Branch Total Length, 5-Branch Avg. Length, 5-Branch Geodesic Depth, 5-Branch Average Radius, 5-Branch skeleton edges, 5-Branch Average Tortuosity, 6-Branch Count, 6-Branch Total Length, 6-Branch Avg. Length, 6-Branch Geodesic Depth, 6-Branch Average Radius, 6-Branch skeleton edges, 6-Branch Average Tortuosity" << endl;
@@ -1620,9 +1625,9 @@ int main(int argc, char** argv)
 	//outStream << "Overall statistics" << endl;
 	//outStream << "Total branch length, Number of tips (= number of branches), Average branch length, Average tortuosity, Total skeleton edges, Average angle to gravity, Average parent angle, Average tip angle, Average emergence angle, Average midpoint angle" << endl;
 	//outStream <<
-	
-	outStream << totalLength << "," << totalBranches << "," << totalLength / (float)totalBranches << "," << totalLength / (float)totalEuclid << "," << totalSkelEdges << "," << totalGravityAngle / totalBranches << "," << totalParentAngle / totalBranches << "," << totalTipAngle / totalBranches << "," << totalEmergenceAngle / totalBranches << "," << totalMidAngle / totalBranches << endl;
-	
+
+	outStream << totalLength << "," << totalBranches << "," << totalLength / (float)totalBranches << "," << totalLength / (float)totalEuclid << "," << totalSkelEdges << "," << totalGravityAngle / totalBranches << "," << totalParentAngle / totalBranches << "," << totalTipAngle / totalBranches << "," << totalEmergenceAngle / totalBranches << "," << totalMidAngle / totalBranches << "," << totalNumChildren / ((float)totalBranches) << endl;
+
 	/**
 	for (int i = 0; i < diameterVts.size(); i++) {
 		//Temporary hack assigning stem hierarchy depth to 0
@@ -1631,7 +1636,7 @@ int main(int argc, char** argv)
 			distTotal += euclideanDistance(vts[diameterVts[i]], vts[diameterVts[i + 1]]);
 		}
 		vector<int> vertEdges = vertIndexEdgeIndices[diameterVts[i]];
-		
+
 		if (vertEdges.size() > 2) {
 			for (int j = 0; j < vertEdges.size(); j++) {
 				internal::Edge edge = edges[vertEdges[j]];
@@ -1677,7 +1682,7 @@ int main(int argc, char** argv)
 				}
 			}
 		}
-		
+
 	}**/
 	//Temporarily, the bt2 trait is rigged to represent the branch level, so it can be visualized in the ET software. Here I just give an actual name as well.
 
@@ -1726,6 +1731,5 @@ int main(int argc, char** argv)
 	std::cout << totalDistance / ((float)numEndPts) << std::endl;
 	return 0;
 }
-
 
 
